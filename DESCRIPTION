@@ -1,0 +1,27 @@
+Package: GcDuo
+Type: Package
+Title: R package for GCxGC processing and PARAFAC analysis
+Version: 1.0.0
+Author: María Llambrich, Lluc Sementé
+Maintainer: María Llambrich <maria.llambrich@urv.cat>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL v3
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 3.6)
+Imports:
+    methods,
+    foreach,
+    iterators,
+    parallel,
+    snow,
+    doSNOW,
+    ncdf4,
+    multiway,
+    rrcov3way,
+    bayestestR,
+    EBImage,
+    magrittr
+RoxygenNote: 7.3.1
