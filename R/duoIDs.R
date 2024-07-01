@@ -298,15 +298,7 @@ getRI <- function(DuoResults, RI){
 
 ########
 
-alkanes <- xlsx::read.xlsx("~/OneDrive - URV/gcxgc_collab/ri_rt_alcans_cryo.xlsx", 1) |>
-  dplyr::mutate(RT = as.numeric(RT))
 
-alkanes <- xlsx::read.xlsx("~/OneDrive - URV/estada/dataverse_datasets/ri_rt_alcans.xlsx", 1) |>
-  dplyr::mutate(RT = as.numeric(RT))
-
-alkanes$RT <- alkanes$RT*60
-
-RI = alkanes[complete.cases(alkanes),]
 
 
 
