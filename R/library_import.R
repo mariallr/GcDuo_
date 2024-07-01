@@ -28,7 +28,6 @@
 #' @export
 #'
 #'
-lib_list <- list.files("~/OneDrive - URV/library/msp_format", full.names = T, pattern = ".msp|.MSP")
 
 library_import <- function(lib_list){
 
@@ -74,6 +73,7 @@ library_import <- function(lib_list){
 }
 
 getMSP <- function(file){
+    li <- NULL
 
   #Get library name
   l_id <- unlist(stringr::str_split(file, "/"))
@@ -135,55 +135,6 @@ getMSP <- function(file){
   li <- lapply(li, getmsp)
   return(li)
 }
-
-lib <- li
-
-lib_ri <- lapply(li, getRI)
-
-file <- lib_list[[1]]
-
-adams <- library_import(file)
-
-nist23_folder <- list.files("~/OneDrive - URV/library/NIST23", , full.names = T, pattern = ".msp|.MSP")
-nist_ri <- getMSP(nist23_folder[6])
-nist_main <- getMSP(nist23_folder[5])
-nist_rep <- getMSP(nist23_folder[7])
-libs <- c(nist_main, nist_rep, nist_ri)
-
-libs_ri <- NULL
-getRI <- function(lib, type = "semi"){
-
-  if(type == "semi") {
-    type <- c("s=", "dbS=", "semi=", " SemiStandardNonPolar=", "ssnp=", "SemiStdNP=", "semistdnp=", "any=")
-  } else if (type == "nonpolar") {
-    type <- c("n=", "dbN=", "nonpolar=", " StandardNonPolar=", "snp=", "StdNP=")
-  } else if (type == "polar") {
-    type <- c("p=", "dbP=", "polar=", " StandardPolar=", "sp=", "StdP=")
-  }
-
-  for(i in 1:length(libs)){
-    print(i)
-    if(!rlang::is_empty(libs[[i]]$ri) & length(libs[[i]]$ri) != 0){
-
-      ri <- str_extract_all(libs[[i]]$ri ,paste(paste(type, '[0-9]{2,10}', sep = ''),collapse = "|")) |>
-        str_remove(paste(type, collapse = '|'))
-
-      ri2 <- str_extract_all(libs[[i]]$ri2 ,paste(paste(type, '[0-9]{2,10}', sep = ''),collapse = "|")) |>
-        str_remove(paste(type, collapse = '|'))
-
-      libs_ri <- rbind(libs_ri, data.frame("comp" = libs[[i]]$name,
-                                           "ri" = ri,
-                                           "ri2" = ri2))
-    } else {
-      libs_ri <- rbind(libs_ri, data.frame("comp" = libs[[i]]$name,
-                                           "ri" = NA,
-                                           "ri2" = NA))
-    }
-  }
-
-}
-
-libs_ri <- getRI(libs, type = "semi")
 
 
 spectramatrix <- function(libs){
