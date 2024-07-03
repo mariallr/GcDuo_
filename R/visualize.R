@@ -26,6 +26,8 @@
 #' @param GcDuoObject asdasijdhjkajh
 #' @param sampleNum the index of the file to visualize
 #' @import patchwork
+#' @import plotly
+#' @import tidyr
 #' @return A ggplot contour
 #' @export
 
@@ -50,6 +52,8 @@ visualizeChrom3D <- function(GcDuoObject, sampleNum = 1)
 #'
 #' @param GcDuoObject asdasijdhjkajh
 #' @param sampleNum the index of the file/s to visualize
+#' @import plotly
+#' @import tidyr
 #' @return An plotly graph
 #' @export
 
