@@ -70,7 +70,8 @@ readFolderCDF <- function(folderPath, modulationTime, mzRange)
 #' Read a single CDF file and transform the data into a 3D array.
 #'
 #' @param pathFolderCDF path to the folder containing the CDF to process.
-#' @param modulationTime modulation time used in the data
+#' @param modulationTime modulation time used in the data.
+#' @param mzRange range values used in the m/z data acquisition.
 #' @return A 3 dimensional array containing all the data in the files following the structure: |sample, mz, time2D, time1D|
 readCFD <- function(filePath, modulationTime, mzRange)
 {
@@ -97,6 +98,7 @@ readCFD <- function(filePath, modulationTime, mzRange)
 
   period <- (max(mz_seq) + 1) - min(mz_seq) # mz period
   mz_range <- range(mz_seq) #mz range
+  mzRange <- mzRange
 
   # clusters
   no_cores <- parallel::detectCores(logical = TRUE)
