@@ -2,6 +2,7 @@
 
 export(ConsProcessing)
 export(PlotPeak)
+export(SpectraView)
 export(duoID)
 export(getMSP)
 export(library_import)

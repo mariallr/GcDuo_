@@ -202,3 +202,57 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 
   return(fig)
 }
+
+##########################
+#' SpectraView
+#'
+#' Get the graphically representation of the spectra
+#'
+#' @param GcDuoObject asdasijdhjkajh
+#' @param sampleNum the index of the file/s to visualize
+#' @import plotly
+#' @import tidyr
+#' @return An plotly graph
+#' @export
+
+SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = T,
+                             mzRange = c(30,600))
+{
+  spec_std <- finalGCDuo$spectra[which(finalGCDuo$peaks$id == peakid),]
+
+  spec_final <- data.frame("mz" = GcDuoObject$mz, "int" = unlist(spec_std))
+
+  if(lib_comp == T) {
+    pos_comp <- sapply(finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)], function(x) which(x == row.names(lib_matrix)))
+
+    pos_comp1 <- lapply(pos_comp, '[', 1)
+
+    spec_lib <- data.frame("mz" = colnames(lib$spectra_matrix),
+                           "int" = lib$lib_matrix[unlist(pos_comp1)[1],])
+
+    mzs <- as.numeric(intersect(spec_final$mz, spec_lib$mz))
+
+    dat <- data.frame(
+      mz = mzs,
+      int_data = spec_final$int[which(spec_final$mz == mzs)],
+      int_lib = spec_lib$int[which(spec_lib$mz %in% mzs)])
+
+    s_plot <- ggplot(dat, aes(x=int_data)) +
+      # Top
+      geom_segment(aes(x=mz, xend=mz, y=0, yend=int_data), color = "#69b3a2") +
+      # Bottom
+      geom_segment(aes(x=mz, xend=mz, y=0, yend=-int_lib), colour = "#404080") +
+      xlab("m/z") + ylab("Rel. Intensity") + theme_minimal()
+
+  } else {
+    s_plot <- ggplot(data = spec_final, aes(x = mz, y = int)) +
+      geom_segment(aes(x=mz, xend=mz, y=0, yend=int), color = "#69b3a2") +
+      theme_minimal()
+  }
+
+  return(ggplotly(s_plot))
+
+}
+
+
+
