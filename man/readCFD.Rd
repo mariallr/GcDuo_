@@ -4,10 +4,12 @@
 \alias{readCFD}
 \title{readCFD}
 \usage{
-readCFD(filePath, modulationTime)
+readCFD(filePath, modulationTime, mzRange)
 }
 \arguments{
-\item{modulationTime}{modulation time used in the data}
+\item{modulationTime}{modulation time used in the data.}
+
+\item{mzRange}{range values used in the m/z data acquisition.}
 
 \item{pathFolderCDF}{path to the folder containing the CDF to process.}
 }

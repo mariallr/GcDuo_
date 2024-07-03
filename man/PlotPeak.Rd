@@ -4,7 +4,13 @@
 \alias{PlotPeak}
 \title{PlotPeak}
 \usage{
-PlotPeak(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic")
+PlotPeak(
+  GcDuoObject,
+  finalGCDuo,
+  peakid = "68-68-1",
+  type = "eic",
+  win_width = 20
+)
 }
 \arguments{
 \item{GcDuoObject}{asdasijdhjkajh}
