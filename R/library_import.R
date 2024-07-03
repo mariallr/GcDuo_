@@ -187,6 +187,7 @@ spectramatrix <- function(libs){
   }
   row.names(ref_matrix) <- as.vector(ref_names)
   ref_matrix <- ref_matrix[complete.cases(ref_matrix),]
+  colnames(ref_matrix) <- seq_mz
 
   return(ref_matrix)
 }

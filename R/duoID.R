@@ -34,6 +34,8 @@ duoID <- function(DuoResults, lib, match_cutoff = 0.7, RI = NULL, RIrange = 30)
   require(dplyr)
   suppressWarnings(library(doSNOW))
 
+  RI = RI; RIrange = 30
+
   if (!is.null(RI) & length(lib) <= 1)
   {
     stop("Not valid library included. Please use...")
