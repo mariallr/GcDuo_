@@ -46,7 +46,8 @@ readFolderCDF <- function(folderPath, modulationTime, mzRange)
   {
     cat(paste0("Reading and processing file ", f,"/",length(filenames),". \n"))
     results[[f]] <- readCFD(filePath = paste0(folderPath, filenames[f]),
-                            modulationTime = modulationTime)
+                            modulationTime = modulationTime,
+                            mzRange = mzRange)
     cat(paste("\n"))
   }
 

@@ -33,7 +33,6 @@
 
 visualizeChrom3D <- function(GcDuoObject, sampleNum = 1)
 {
-  print("a")
   dataunf <- array(GcDuoObject$data4D[sampleNum,,,], dim = c(
                                    dim(GcDuoObject$data4D)[2],
                                    prod(dim(GcDuoObject$data4D)[3:4])))
