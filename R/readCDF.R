@@ -71,7 +71,7 @@ readFolderCDF <- function(folderPath, modulationTime, mzRange)
 #' @param pathFolderCDF path to the folder containing the CDF to process.
 #' @param modulationTime modulation time used in the data
 #' @return A 3 dimensional array containing all the data in the files following the structure: |sample, mz, time2D, time1D|
-readCFD <- function(filePath, modulationTime)
+readCFD <- function(filePath, modulationTime, mzRange)
 {
   suppressWarnings(library(doParallel))
   # File information Extraction
@@ -134,12 +134,28 @@ readCFD <- function(filePath, modulationTime)
   time_values2d <- round(seq(0, (modulationTime - (modulationTime/dim2d)), length.out = dim2d), 3) #get time values retention time 2
 
   #create the 3D array
+
   array3D <- array(data = c(rep(0, length.out = length(mz_seq)*needpos), as.vector(t(gc_data))),
-                   dim = c(period, dim2d, dim1d),
-                   dimnames = list(mz_seq, time_values2d, time_values1d))
+                     dim = c(period, dim2d, dim1d),
+                     dimnames = list(mz_seq, time_values2d, time_values1d))
+
+  if (length(mz_seq) > length(seq(mzRange[1], mzRange[2]))) {
+    mz1 <- which(mz_seq == mzRange[1])
+    mz2 <- which(mz_seq == mzRange[2])
+
+    message(paste("mz dimension reduced from ", mz_range[1], "-", mz_range[2],
+                  "to ", mzRange[1], "-", mzRange[2]))
+
+    array3D <- array3D[mz1:mz2,,]
+
+  } else {
+    mz1 <- 1
+    mz2 <- length(mz_seq)
+  }
+
   rm(gc_data)
 
-  results <- list(data = array3D, mz_seq = mz_seq, time_values2d = time_values2d, time_values1d = time_values1d)
+  results <- list(data = array3D, mz_seq = mz_seq[mz1:mz2], time_values2d = time_values2d, time_values1d = time_values1d)
 
   return(results)
 }
@@ -217,18 +233,15 @@ uniformDimentions <- function(data3DList, mzRange)
     #mzRange <- range(data3DList[[i]]$mz_seq)
     mzRange <- mzRange
 
-    min_mz <- mzRange[1]
-    max_mz <- mzRange[2]
+    if (mzRange[1] < min_mz)
+    {
+      min_mz <- mzRange[1]
+    }
 
-    # if (mzRange[1] < min_mz)
-    # {
-    #   min_mz <- mzRange[1]
-    # }
-    #
-    # if (mzRange[2] > max_mz)
-    # {
-    #   max_mz <- mzRange[2]
-    # }
+    if (mzRange[2] > max_mz)
+    {
+      max_mz <- mzRange[2]
+    }
   }
 
   #Uniformed dimentional axis
