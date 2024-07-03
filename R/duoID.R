@@ -137,9 +137,17 @@ duoID <- function(DuoResults, lib, match_cutoff = 0.7, RI = NULL, RIrange = 30)
     return(DuoResults)
 }
 
-## Peak ID
-
-libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
+##########################
+#' libID
+#'
+#' Annotation of spectras
+#'
+#' @param Peak2ID spectra and metadata to annotate
+#' @param lib_matrix spectras from library to perform dot product
+#' @return data table with the annotated peak
+#' @export
+#'
+libID <- function(Peak2ID, lib_matrix) {
 
     spec_one <- Peak2ID$spectra
 
@@ -149,7 +157,6 @@ libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
     }
 
     names(cor_cut) <- row.names(lib_matrix)
-    #cor_cut <- apply(lib_matrix, 1, function(x) lsa::cosine(as.numeric(x), as.numeric(spec_one)))
 
   #Get the similarity values
   #Only matches over the cutoff
@@ -231,8 +238,18 @@ libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
 
 }
 
-# ID inverse (reverse similarity)
-
+##########################
+#' ID inverse
+#'
+#' Performs reverse similarity
+#'
+#' @param cor_cut dot product results
+#' @param spec_sample sample spectra
+#' @param match_cutoff value to consider a correct match (range 0 to 1)
+#' @param lib_matrix matrix from the library
+#' @return data table with the reverse similarity
+#' @export
+#'
 id_rev <- function(cor_cut, spec_sample, match_cutoff, lib_matrix) {
 
   id_table <- data.frame()
@@ -269,9 +286,16 @@ id_rev <- function(cor_cut, spec_sample, match_cutoff, lib_matrix) {
   cat(paste0("Time elapsed: ", format(difftime(finish, start, units = "min"), digits = 3),". \n"))
 }
 
-## RI calculation
-
-## retention time to retention index (individually)
+##########################
+#' RI calculation
+#'
+#' Calculates Kovats Retention Index based in Alkanes
+#'
+#' @param rtTime retention time first dimension
+#' @param lib library with RIs
+#' @return vector with RTs converted to RIs
+#' @export
+#'
 rt2ri <- function(rtTime, lib) {
 
   vecrt <- sort(c(rtTime, lib$RT))
@@ -283,6 +307,16 @@ rt2ri <- function(rtTime, lib) {
   return(ri_e)
 }
 
+##########################
+#' Get Retention Index
+#'
+#' Calculates Kovats Retention Index based in Alkanes
+#'
+#' @param DuoResults object result of processing
+#' @param RI list of alkanes RT-RI
+#' @return DuoResult object with RI calculated
+#' @export
+#'
 getRI <- function(DuoResults, RI){
 
   ris <- NULL
