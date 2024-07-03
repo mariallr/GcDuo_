@@ -6,14 +6,6 @@
 \usage{
 getRI(DuoResults, RI)
 }
-\arguments{
-\item{DuoResults}{object result of processing}
-
-\item{RI}{list of alkanes RT-RI}
-}
-\value{
-DuoResult object with RI calculated
-}
 \description{
 Calculates Kovats Retention Index based in Alkanes
 }

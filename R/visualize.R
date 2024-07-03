@@ -39,10 +39,14 @@ visualizeChrom3D <- function(GcDuoObject, sampleNum = 1)
 
   ticred <- apply(dataunf, 2, sum)
 
-  plotly::plot_ly(z = matrix(ticred, nrow = dim(GcDuoObject$data4D)[3],
+  plotly::plot_ly(x = GcDuoObject$time1d/60,
+                  y = GcDuoObject$time2d,
+                  z = matrix(ticred, nrow = dim(GcDuoObject$data4D)[3],
                              dimnames = list(GcDuoObject$time2d, GcDuoObject$time1d)),
                   type = "contour", contours = list(showlabels = T, coloring = "OrRd"),
-                  colorscale = "OrRd")
+                  colorscale = "OrRd") |>
+    layout(scene = list(xaxis = list(title = "Retention time 1 (min"),
+                        yaxis = list(title = "Retention time 2 (s)")))
 }
 
 ##########################

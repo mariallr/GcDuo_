@@ -6,18 +6,6 @@
 \usage{
 id_rev(cor_cut, spec_sample, match_cutoff, lib_matrix)
 }
-\arguments{
-\item{cor_cut}{dot product results}
-
-\item{spec_sample}{sample spectra}
-
-\item{match_cutoff}{value to consider a correct match (range 0 to 1)}
-
-\item{lib_matrix}{matrix from the library}
-}
-\value{
-data table with the reverse similarity
-}
 \description{
 Performs reverse similarity
 }

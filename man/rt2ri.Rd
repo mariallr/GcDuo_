@@ -6,14 +6,6 @@
 \usage{
 rt2ri(rtTime, lib)
 }
-\arguments{
-\item{rtTime}{retention time first dimension}
-
-\item{lib}{library with RIs}
-}
-\value{
-vector with RTs converted to RIs
-}
 \description{
 Calculates Kovats Retention Index based in Alkanes
 }

@@ -102,8 +102,11 @@ ConsProcessing <- function(GcDuoObject, DuoResults, lib, win_width = 10)
 }
 
 
-#######
-
+##########################
+#' Constrained Parafac Individually
+#'
+#' Process using parafac with the identified compounds obtained for each peak
+#'
 ConstrainedParafac <- function(DuoPeak, GcDuoObject, DuoResults, lib_matrix){
 
   temp <- list(temp_peak = NULL,
@@ -229,18 +232,6 @@ ConstrainedParafac <- function(DuoPeak, GcDuoObject, DuoResults, lib_matrix){
 }
 
 
-# #Gaussian fitting
-# apex <- which.max(cut_data)
-# if(apex >= 10 & apex <= 30) {
-#   left_part <- which.min(abs(cut_data[1:apex] - cut_data[apex]/2))
-#   right_part <- (apex - 1) + which.min(abs(cut_data[apex:length(cut_data)] - cut_data[apex]/2))
-#   sigma <- (cut_data[right_part]  - cut_data[left_part])/2
-#   min_width <- sigma*3*2 # minimal expected width for a Gaussian peak with that intensity
-#
-#   if(abs(cut_data[1] - cut_data[length(cut_data)]) < min_width){
-#
-#   }
-# }
 
 
 

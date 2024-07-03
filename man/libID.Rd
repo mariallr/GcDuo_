@@ -6,14 +6,6 @@
 \usage{
 libID(Peak2ID, lib_matrix)
 }
-\arguments{
-\item{Peak2ID}{spectra and metadata to annotate}
-
-\item{lib_matrix}{spectras from library to perform dot product}
-}
-\value{
-data table with the annotated peak
-}
 \description{
 Annotation of spectras
 }
