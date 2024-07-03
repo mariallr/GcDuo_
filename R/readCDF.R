@@ -217,15 +217,18 @@ uniformDimentions <- function(data3DList, mzRange)
     #mzRange <- range(data3DList[[i]]$mz_seq)
     mzRange <- mzRange
 
-    if (mzRange[1] < min_mz)
-    {
-      min_mz <- mzRange[1]
-    }
+    min_mz <- mzRange[1]
+    max_mz <- mzRange[2]
 
-    if (mzRange[2] > max_mz)
-    {
-      max_mz <- mzRange[2]
-    }
+    # if (mzRange[1] < min_mz)
+    # {
+    #   min_mz <- mzRange[1]
+    # }
+    #
+    # if (mzRange[2] > max_mz)
+    # {
+    #   max_mz <- mzRange[2]
+    # }
   }
 
   #Uniformed dimentional axis
@@ -248,7 +251,7 @@ uniformDimentions <- function(data3DList, mzRange)
     df <- array(data = 0, dim = c(length(mz), length(time2d), length(time1d)))
 
     if (abs(length(data3DList[[i]]$time_values1d) - length(time1d)) > 1 |
-        abs(length(data3DList[[i]]$mz_seq) - length(mz)) > 50 )
+        abs(length(data3DList[[i]]$mz_seq) - length(mz)) > 100 )
     {
       stop("Test: The difference between mass axies or time1d axies in the files is to big. We need to develope new code for it!")
     }
