@@ -39,7 +39,7 @@ visualizeChrom3D <- function(GcDuoObject, sampleNum = 1)
 
   ticred <- apply(dataunf, 2, sum)
 
-  plotly::plot_ly(x = GcDuoObject$time1d/60,
+  plot_ly(x = GcDuoObject$time1d/60,
                   y = GcDuoObject$time2d,
                   z = matrix(ticred, nrow = dim(GcDuoObject$data4D)[3],
                              dimnames = list(GcDuoObject$time2d, GcDuoObject$time1d)),
@@ -209,28 +209,31 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 #'
 #' Get the graphically representation of the spectra
 #'
-#' @param GcDuoObject asdasijdhjkajh
-#' @param sampleNum the index of the file/s to visualize
+#' @param GcDuoObject raw GcDuo object
+#' @param finalGCDuo processed GcDuo object
+#' @param peakid peak ID to plot
+#' @param lib_comp value to compare spectra with the library
+#' @param mzRange range of m/z values to visualize
 #' @import plotly
 #' @import tidyr
 #' @import ggplot2
 #' @return An plotly graph
 #' @export
 
-SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = T,
+SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = lib,
                              mzRange = c(30,600))
 {
   spec_std <- finalGCDuo$spectra[which(finalGCDuo$peaks$id == peakid),]
 
+  comp_name <- finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)]
+
   spec_final <- data.frame("mz" = GcDuoObject$mz, "int" = unlist(spec_std))
 
-  if(lib_comp == T) {
-    pos_comp <- sapply(finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)], function(x) which(x == row.names(lib_matrix)))
-
-    pos_comp1 <- lapply(pos_comp, '[', 1)
+  if(!is.null(lib_comp)) {
+    pos_comp <- sapply(finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)], function(x) which(x == row.names(lib$spectra_matrix)))
 
     spec_lib <- data.frame("mz" = colnames(lib$spectra_matrix),
-                           "int" = lib$lib_matrix[unlist(pos_comp1)[1],])
+                           "int" = lib$spectra_matrix[(pos_comp)[1],])
 
     mzs <- as.numeric(intersect(spec_final$mz, spec_lib$mz))
 
@@ -242,14 +245,17 @@ SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = T,
     s_plot <- ggplot(dat, aes(x=int_data)) +
       # Top
       geom_segment(aes(x=mz, xend=mz, y=0, yend=int_data), color = "#69b3a2") +
+      annotate(geom = "text", label = comp_name, x = length(dat$mz), y = 0.8, color = "#69b3a2")+
       # Bottom
       geom_segment(aes(x=mz, xend=mz, y=0, yend=-int_lib), colour = "#404080") +
+      annotate(geom = "text", label = paste(row.names(lib$spectra_matrix)[unlist(pos_comp1)[1]], "- Library"), x = length(dat$mz), y = -0.8, color = "#404080")+
       xlab("m/z") + ylab("Rel. Intensity") + theme_minimal()
 
   } else {
     s_plot <- ggplot(data = spec_final, aes(x = mz, y = int)) +
       geom_segment(aes(x=mz, xend=mz, y=0, yend=int), color = "#69b3a2") +
-      theme_minimal()
+      annotate(geom = "text", label = comp_name, x = length(dat$mz), y = 0.8, color = "#69b3a2")+
+      xlab("m/z") + ylab("Rel. Intensity") + theme_minimal()
   }
 
   return(ggplotly(s_plot))

@@ -8,14 +8,20 @@ SpectraView(
   GcDuoObject,
   finalGCDuo,
   peakid = "7-1",
-  lib_comp = T,
+  lib_comp = lib,
   mzRange = c(30, 600)
 )
 }
 \arguments{
-\item{GcDuoObject}{asdasijdhjkajh}
+\item{GcDuoObject}{raw GcDuo object}
 
-\item{sampleNum}{the index of the file/s to visualize}
+\item{finalGCDuo}{processed GcDuo object}
+
+\item{peakid}{peak ID to plot}
+
+\item{lib_comp}{value to compare spectra with the library}
+
+\item{mzRange}{range of m/z values to visualize}
 }
 \value{
 An plotly graph
