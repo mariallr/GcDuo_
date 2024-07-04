@@ -98,6 +98,7 @@ visualizeChrom2D <- function(GcDuoObject, samples = 1:12)
 #' @param finalGCDuo final table with the peaks detected
 #' @param peakid index of the selected peak to visualize
 #' @param type select if the visualization is for tic or for eic
+#' @import ggplot2
 #' @return A ggplot multiline
 #' @export
 
@@ -212,6 +213,7 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 #' @param sampleNum the index of the file/s to visualize
 #' @import plotly
 #' @import tidyr
+#' @import ggplot2
 #' @return An plotly graph
 #' @export
 
