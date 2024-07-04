@@ -223,6 +223,7 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = lib,
                              mzRange = c(30,600))
 {
+
   spec_std <- finalGCDuo$spectra[which(finalGCDuo$peaks$id == peakid),]
 
   comp_name <- finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)]
@@ -230,10 +231,10 @@ SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = lib,
   spec_final <- data.frame("mz" = GcDuoObject$mz, "int" = unlist(spec_std))
 
   if(!is.null(lib_comp)) {
-    pos_comp <- sapply(finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)], function(x) which(x == row.names(lib$spectra_matrix)))
+    pos_comp <- sapply(finalGCDuo$peaks$compound[which(finalGCDuo$peaks$id == peakid)], function(x) which(x == row.names(lib_comp$spectra_matrix)))
 
-    spec_lib <- data.frame("mz" = colnames(lib$spectra_matrix),
-                           "int" = lib$spectra_matrix[(pos_comp)[1],])
+    spec_lib <- data.frame("mz" = colnames(lib_comp$spectra_matrix),
+                           "int" = lib_comp$spectra_matrix[(pos_comp)[1],])
 
     mzs <- as.numeric(intersect(spec_final$mz, spec_lib$mz))
 
@@ -248,7 +249,7 @@ SpectraView <- function(GcDuoObject, finalGCDuo, peakid = "7-1", lib_comp = lib,
       annotate(geom = "text", label = comp_name, x = length(dat$mz), y = 0.8, color = "#69b3a2")+
       # Bottom
       geom_segment(aes(x=mz, xend=mz, y=0, yend=-int_lib), colour = "#404080") +
-      annotate(geom = "text", label = paste(row.names(lib$spectra_matrix)[unlist(pos_comp1)[1]], "- Library"), x = length(dat$mz), y = -0.8, color = "#404080")+
+      annotate(geom = "text", label = paste(row.names(lib_comp$spectra_matrix)[unlist(pos_comp)[1]], "- Library"), x = length(dat$mz), y = -0.8, color = "#404080")+
       xlab("m/z") + ylab("Rel. Intensity") + theme_minimal()
 
   } else {
