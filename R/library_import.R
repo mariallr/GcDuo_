@@ -52,11 +52,22 @@ library_import <- function(lib_list){
   libs_dic <- NULL
   for(i in 1:length(libs)){
     libs_dic <- rbind(libs_dic, data.frame("comp" = libs[[i]]$name,
-                                           "exacmass" = libs[[i]]$exactmass,
-                                           "formula" = libs[[i]]$formula,
-                                           "inchikey" = ifelse(length(libs[[i]]$inchikey) == 0,
+                                           "exactmass" = ifelse(
+                                             length(libs[[i]]$exactmass) == 0,
+                                                                NA,
+                                             libs[[i]]$exactmass),
+                                           "formula" = ifelse(
+                                             length(libs[[i]]$formula) == 0,
+                                                              NA,
+                                             libs[[i]]$formula),
+                                           "inchikey" = ifelse(
+                                             length(libs[[i]]$inchikey) == 0,
                                                                NA,
-                                                               libs[[i]]$inchikey)))
+                                                               libs[[i]]$inchikey),
+                                           "ri" = ifelse(
+                                             length(libs[[i]]$ri) == 0,
+                                                         NA,
+                                                         libs[[i]]$ri)))
   }
 
   ref_matrix <- NULL
@@ -65,8 +76,6 @@ library_import <- function(lib_list){
     results <- foreach::foreach(lib = lib_list, .options.snow = opts) %dopar% spectramatrix(lib)
   }
   parallel::stopCluster(cl)
-
-  colnames(ref_matrix) <- seq_mz
 
   lib <- list(data = libs_dic, spectra_matrix = ref_matrix)
 
@@ -80,7 +89,6 @@ library_import <- function(lib_list){
 #' @param file msp file to read
 #' @import doParallel
 #' @return a list of list
-#' @export
 #'
 getMSP <- function(file){
     li <- NULL
@@ -116,11 +124,14 @@ getMSP <- function(file){
     ids <- x[grep('ID: ',x,ignore.case = TRUE)]
     id <- gsub('ID: ','',ids,ignore.case=TRUE)
     comm <- x[grep('^COMMENT: ',x,ignore.case = TRUE)]
-    rts <- x[grep('ri. |retention.index. ',tolower(x),ignore.case = TRUE)][1]
+    rts <- x[grep('ri. |retention.index. |retentionindex. ',tolower(x),ignore.case = TRUE)][1]
 
     # Nist
-    rt_ <- unlist(regmatches(tolower(rts), gregexpr('ri.*[0-9]*|retention.index.*[0-9]*', tolower(rts))))
-    rtt <- gsub('ri.|retention.index. ','',rt_, ignore.case=TRUE)
+    rt_ <- unlist(regmatches(tolower(rts),
+                             gregexpr(
+                               'ri.*[0-9]*|retention.index.*[0-9]*|retentionindex.*[0-9]*',
+                               tolower(rts))))
+    rtt <- gsub('ri.|retention.index. |retentionindex. ','',rt_, ignore.case=TRUE)
 
     # Number of m/z fragments
     npt <- x[grep('^Num Peaks: ',x, ignore.case=TRUE)]
@@ -153,8 +164,6 @@ getMSP <- function(file){
 #' @param libs list obtained with `getMSP` function
 #' @import doParallel
 #' @return a matrix
-#' @export
-#'
 #'
 spectramatrix <- function(libs){
   seq_mz <- seq(30,600)
