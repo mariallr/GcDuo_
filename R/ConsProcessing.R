@@ -228,6 +228,9 @@ ConstrainedParafac <- function(DuoPeak, GcDuoObject, DuoResults, lib_matrix){
         }
       }
     }
+
+    colnames(temp_ar) <- GcDuoObject$files
+    colnames(temp_int) <- GcDuoObject$files
     return(temp)
 }
 
