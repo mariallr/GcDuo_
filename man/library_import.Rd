@@ -4,7 +4,7 @@
 \alias{library_import}
 \title{library_import}
 \usage{
-library_import(lib_list)
+library_import(msp_file)
 }
 \arguments{
 \item{lib_list}{path for the msp file/s}

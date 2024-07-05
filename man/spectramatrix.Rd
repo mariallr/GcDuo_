@@ -4,7 +4,7 @@
 \alias{spectramatrix}
 \title{spectramatrix}
 \usage{
-spectramatrix(libs)
+spectramatrix(lis)
 }
 \arguments{
 \item{libs}{list obtained with `getMSP` function}

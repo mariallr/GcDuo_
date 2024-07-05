@@ -4,7 +4,7 @@
 \alias{getMSP}
 \title{getMSP}
 \usage{
-getMSP(file)
+getMSP(x)
 }
 \arguments{
 \item{file}{msp file to read}

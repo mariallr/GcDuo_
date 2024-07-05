@@ -28,7 +28,26 @@
 #' @export
 #'
 #'
-library_import <- function(lib_list){
+library_import <- function(msp_file){
+
+  li <- NULL
+
+  message("Reading")
+
+  #Get library name
+  l_id <- unlist(stringr::str_split(msp_file, "/"))
+  library_id <- stringr::str_split(l_id[length(l_id)], "\\.")[[1]][1]
+
+  msp <- readLines(msp_file)
+  # remove empty lines
+  msp <- msp[msp != '']
+  #number of compounds
+  ncomp <- grep('^NAME:', msp, ignore.case = TRUE)
+
+  # Divide by entry
+  splitFactorTmp <- rep(1:length(ncomp), diff(c(ncomp, length(msp) + 1)))
+
+  li <- split(msp,f = splitFactorTmp)
 
   suppressWarnings(library(doSNOW))
 
@@ -37,47 +56,69 @@ library_import <- function(lib_list){
   doSNOW::registerDoSNOW(cl)
 
   # progress bar
-  pb <- txtProgressBar(max = length(lib_list), style = 3)
+  pb <- txtProgressBar(max = length(li), style = 3)
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
 
   # processing iteration
-  libs <- list()
   if (foreach::getDoParRegistered())
   {
-    libs <- foreach::foreach(lib = lib_list, .options.snow = opts) %dopar% getMSP(lib)
+    libs <- foreach::foreach(lib = li, .options.snow = opts) %dopar% getMSP(lib)
   }
-  parallel::stopCluster(cl)
 
   libs_dic <- NULL
   for(i in 1:length(libs)){
     libs_dic <- rbind(libs_dic, data.frame("comp" = libs[[i]]$name,
                                            "exactmass" = ifelse(
                                              length(libs[[i]]$exactmass) == 0,
-                                                                NA,
+                                             NA,
                                              libs[[i]]$exactmass),
                                            "formula" = ifelse(
                                              length(libs[[i]]$formula) == 0,
-                                                              NA,
+                                             NA,
                                              libs[[i]]$formula),
                                            "inchikey" = ifelse(
                                              length(libs[[i]]$inchikey) == 0,
-                                                               NA,
-                                                               libs[[i]]$inchikey),
+                                             NA,
+                                             libs[[i]]$inchikey),
                                            "ri" = ifelse(
                                              length(libs[[i]]$ri) == 0,
-                                                         NA,
-                                                         libs[[i]]$ri)))
+                                             NA,
+                                             libs[[i]]$ri)))
   }
 
-  ref_matrix <- NULL
+  parallel::stopCluster(cl)
+
+  message("Converting to matrix")
+
+  no_cores <- parallel::detectCores(logical = TRUE)
+  cl <- parallel::makeCluster(no_cores - 1)
+  doSNOW::registerDoSNOW(cl)
+
+  # progress bar
+  pb <- txtProgressBar(max = length(libs), style = 3)
+  progress <- function(n) setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+
   if (foreach::getDoParRegistered())
   {
-    results <- foreach::foreach(lib = lib_list, .options.snow = opts) %dopar% spectramatrix(lib)
+    results <- foreach::foreach(lis = libs, .options.snow = opts) %dopar% spectramatrix(lis)
   }
   parallel::stopCluster(cl)
 
-  lib <- list(data = libs_dic, spectra_matrix = ref_matrix)
+  spec_df <- data.frame((sapply(results,"[[",1)))
+
+  spectra_matrix <- do.call(rbind, spec_df)
+
+  names_sp <- data.frame((sapply(results,"[[",2)))
+
+  if(identical(names_sp[,1], libs_dic$comp)) {
+    row.names(spectra_matrix) <- names_sp[,1]
+  } else {
+    break
+  }
+
+  lib <- list(data = libs_dic, spectra_matrix = spectra_matrix)
 
   return(lib)
 }
@@ -90,27 +131,8 @@ library_import <- function(lib_list){
 #' @import doParallel
 #' @return a list of list
 #'
-getMSP <- function(file){
-    li <- NULL
+getMSP <- function(x){
 
-  #Get library name
-  l_id <- unlist(stringr::str_split(file, "/"))
-  library_id <- stringr::str_split(l_id[length(l_id)], "\\.")[[1]][1]
-
-  msp <- readLines(file)
-  # remove empty lines
-  msp <- msp[msp != '']
-  #number of compounds
-  ncomp <- grep('^NAME:', msp, ignore.case = TRUE)
-
-  # Divide by entry
-  splitFactorTmp <- rep(1:length(ncomp), diff(c(ncomp, length(msp) + 1)))
-
-  li <- split(msp,f = splitFactorTmp)
-
-  # Transform to table
-
-  getmsp <- function(x){
     namet <- x[grep('^NAME:',x, ignore.case=TRUE)]
     name <- gsub('^NAME: ','',namet, ignore.case=TRUE)
     exactmasst <- x[grep('^EXACT.MASS:|^EXACTMASS:',x, ignore.case=TRUE)]
@@ -147,14 +169,9 @@ getMSP <- function(file){
       ins <- unlist(lapply(massesInts, '[[', 2))
       # if any NAs remove from indx
       spectra <- cbind.data.frame(mz=mz,ins=ins)
-      return(list(name=name,exactmass=exactmass, cas = cas, formula=formula, inchikey=inchikey,
-                  db.id = id, lib.id = library_id, ri = rtt, ri2 = rts, np = np,spectra=spectra))
     }
-
-  }
-
-  li <- lapply(li, getmsp)
-  return(li)
+    return(list(name=name,exactmass=exactmass, cas = cas, formula=formula, inchikey=inchikey,
+                db.id = id, lib.id = library_id, ri = rtt, ri2 = rts, np = np,spectra=spectra))
 }
 
 #' spectramatrix
@@ -163,15 +180,14 @@ getMSP <- function(file){
 #'
 #' @param libs list obtained with `getMSP` function
 #' @import doParallel
+#' @import tibble
+#' @import dplyr
 #' @return a matrix
 #'
-spectramatrix <- function(libs){
+spectramatrix <- function(lis){
+
   seq_mz <- seq(30,600)
-  ref_matrix <- matrix(nrow = length(libs), ncol = length(seq_mz))
-  ref_names <- NULL
-  for (j in 1:length(libs)) {
-    print(j)
-    spec_ref <- tibble(libs[[j]]$spectra)
+    spec_ref <- tibble(lis$spectra)
     spec_ref_ok <- spec_ref %>% mutate(
       mz = round(as.numeric(as.character(mz)),0),
       ins = as.numeric(as.character(ins))) %>%
@@ -184,24 +200,23 @@ spectramatrix <- function(libs){
       spec_ref_ok <- spec_ref_ok %>%
         add_row(mz = seq_mz[!(seq_mz %in% .$mz)], ins = 0) %>%
         arrange(mz)
+    } else if (nrow(spec_ref_ok) == 0) {
+      ref_matrix <- rep(NA, length(seq_mz))
     }
 
-    ref_names <- c(ref_names, libs[[j]]$name)
+    ref_names <- lis$name
     if (nrow(spec_ref_ok) == length(seq_mz)) {
 
       spec_ref_ok$rel <- spec_ref_ok$ins/max(spec_ref_ok$ins)
 
-      ref_matrix[j,] <- spec_ref_ok$rel
+      ref_matrix <- spec_ref_ok$rel
     }
-  }
-  row.names(ref_matrix) <- as.vector(ref_names)
-  ref_matrix <- ref_matrix[complete.cases(ref_matrix),]
-  colnames(ref_matrix) <- seq_mz
 
-  return(ref_matrix)
+    res <- list(ref_matrix = ref_matrix,
+                ref_names = ref_names)
+
+  return(res)
 }
-
-
 
 
 
