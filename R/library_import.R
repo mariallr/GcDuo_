@@ -63,10 +63,10 @@ library_import <- function(msp_file){
   libs <- lapply(li, getMSP)
 
   # processing iteration
-  if (foreach::getDoParRegistered())
-  {
-    libs <- foreach::foreach(lib = li, .options.snow = opts) %dopar% getMSP(lib)
-  }
+  # if (foreach::getDoParRegistered())
+  # {
+  #   libs <- foreach::foreach(lib = li, .options.snow = opts) %dopar% getMSP(lib)
+  # }
 
   libs_dic <- NULL
   for(i in 1:length(libs)){
