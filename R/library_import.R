@@ -173,7 +173,7 @@ getMSP <- function(x){
       spectra <- cbind.data.frame(mz=mz,ins=ins)
     }
     return(list(name=name,exactmass=exactmass, cas = cas, formula=formula, inchikey=inchikey,
-                db.id = id, lib.id = library_id, ri = rtt, ri2 = rts, np = np,spectra=spectra))
+                db.id = id, ri = rtt, ri2 = rts, np = np,spectra=spectra))
 }
 
 #' spectramatrix
