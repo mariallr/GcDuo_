@@ -60,6 +60,8 @@ library_import <- function(msp_file){
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
 
+  libs <- lapply(li, getMSP)
+
   # processing iteration
   if (foreach::getDoParRegistered())
   {
