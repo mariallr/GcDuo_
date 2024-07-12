@@ -85,9 +85,15 @@ readCFD <- function(filePath, modulationTime, mzRange)
   point <- ncdf4::ncvar_get(nc, "point_count")
   ncdf4::nc_close(nc) #close connection to cdf file
 
-  f_mostr <- 1/abs(time[1] - time[2]) #frequency
-  dim2d <- floor(f_mostr) * modulationTime  # frequency * modulation = dimension retention time 2
-  dim1d <- trunc(length(time)/dim2d, 0) # dimension retention time 1
+  N <- length(time)
+
+  time <- time/60
+  f_mostr <- abs(time[1] - time[2]) #frequency
+  mod_t_ex <- round((modulationTime/60)/f_mostr, 0) * f_mostr
+  cycles <- mod_t_ex/f_mostr
+
+  dim2d <- cycles  # frequency * modulation = dimension retention time 2
+  dim1d <- N/ cycles # dimension retention time 1
 
   mz_nodec <- round(mz,0)
   if(tail(sort(unique(mz_nodec)),1) - tail(sort(unique(mz_nodec)),2)[1] == 1){
