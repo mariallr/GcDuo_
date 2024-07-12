@@ -131,6 +131,23 @@ readCFD <- function(filePath, modulationTime, mzRange)
   }
   rm(int_list)
 
+  if(time[1] > f_mostr) {
+    # Filling time and intensity axis with zeros to ensure the folding is correct
+    #needtime <- seq(0, (time[1]), by = mean(diff(time))) #correct time at the endings
+    # posdelay <- length(needtime)/dim2d
+    # misspos <- (trunc(posdelay) - 1) * dim2d
+    # needpos <- length(needtime) - misspos
+    # time_cor <- c(tail(needtime, n = needpos), time)
+    time_pos <- seq(1, length(time), by = dim2d)
+    time_values1d <- time[time_pos] #get time values retention time 1
+    # dim1d <- length(time_values1d)
+    time_values2d <- round(seq(0, (modulationTime - (modulationTime/dim2d)), length.out = dim2d), 3) #get time values retention time 2
+  } else {
+
+    time_pos <- seq(1, length(time), by = dim2d)
+    time_values1d <- time[time_pos] #get time values retention time 1
+    time_values2d <- round(seq(0, (modulationTime - (modulationTime/dim2d)), length.out = dim2d), 3) #get time values retention time 2
+  }
   # Filling time and intensity axis with zeros to ensure the folding is correct
   #needtime <- seq(0, (time[1]), by = mean(diff(time))) #correct time at the endings
   # posdelay <- length(needtime)/dim2d
@@ -145,7 +162,7 @@ readCFD <- function(filePath, modulationTime, mzRange)
   #create the 3D array
 
   array3D <- array(data = c(as.vector(t(gc_data))),
-                     dim = c(period, dim2d, dim1d),
+                     dim = c(round(period,0), round(dim2d,0), round(dim1d,0)),
                      dimnames = list(mz_seq, time_values2d, time_values1d))
 
   if (length(mz_seq) > length(seq(mzRange[1], mzRange[2]))) {
