@@ -137,8 +137,8 @@ readCFD <- function(filePath, modulationTime, mzRange)
   # misspos <- (trunc(posdelay) - 1) * dim2d
   # needpos <- length(needtime) - misspos
   # time_cor <- c(tail(needtime, n = needpos), time)
-  # time_pos <- seq(1, length(time_cor), by = dim2d)
-  # time_values1d <- time_cor[time_pos] #get time values retention time 1
+  time_pos <- seq(1, length(time), by = dim2d)
+  time_values1d <- time[time_pos] #get time values retention time 1
   # dim1d <- length(time_values1d)
   time_values2d <- round(seq(0, (modulationTime - (modulationTime/dim2d)), length.out = dim2d), 3) #get time values retention time 2
 
