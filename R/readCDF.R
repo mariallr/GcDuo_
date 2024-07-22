@@ -123,6 +123,11 @@ readCFD <- function(filePath, modulationTime, mzRange)
   }
   parallel::stopCluster(cl)
 
+  # int_list <- list()
+  # for(i in 1:length(time)) {
+  #   int_list[[i]] <- getSpectrumIntensity(mzs = mz, points =  point, index =  i, ints = int, mz_seq = mz_seq)
+  # }
+
   # Shape data conveniently
   gc_data <- array(dim = c(length(int_list), length(int_list[[1]])))
   for (spec in 1:nrow(gc_data))
@@ -131,16 +136,17 @@ readCFD <- function(filePath, modulationTime, mzRange)
   }
   rm(int_list)
 
-  if(time[1] > f_mostr) {
+  if(time[1] > modulationTime/60) {
+
+    need_pos <- (time[1]/(modulationTime/60))
+    start_pos <- (need_pos - trunc(need_pos))*cycles
     # Filling time and intensity axis with zeros to ensure the folding is correct
-    #needtime <- seq(0, (time[1]), by = mean(diff(time))) #correct time at the endings
-    # posdelay <- length(needtime)/dim2d
-    # misspos <- (trunc(posdelay) - 1) * dim2d
-    # needpos <- length(needtime) - misspos
-    # time_cor <- c(tail(needtime, n = needpos), time)
+
+    needval <- seq(0, (time[1]), length.out = need_pos) #correct time at the endings
+
     time_pos <- seq(1, length(time), by = dim2d)
     time_values1d <- time[time_pos] #get time values retention time 1
-    # dim1d <- length(time_values1d)
+    dim1d <- length(time_values1d)
     time_values2d <- round(seq(0, (modulationTime - (modulationTime/dim2d)), length.out = dim2d), 3) #get time values retention time 2
   } else {
 
@@ -161,7 +167,7 @@ readCFD <- function(filePath, modulationTime, mzRange)
 
   #create the 3D array
 
-  array3D <- array(data = c(as.vector(t(gc_data))),
+  array3D <- array(data = c(rep(min(gc_data), length.out = length(needval)*length(mz_seq)), as.vector(t(gc_data))),
                      dim = c(round(period,0), round(dim2d,0), round(dim1d,0)),
                      dimnames = list(mz_seq, time_values2d, time_values1d))
 
