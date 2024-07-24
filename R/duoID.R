@@ -142,7 +142,9 @@ duoID <- function(DuoResults, lib, match_cutoff = 0.7, RI = NULL, RIrange = 30)
 #'
 #' Annotation of spectras
 #'
-libID <- function(Peak2ID, lib_matrix) {
+libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
+
+  libs_ri <- libs_ri; samples_ri <- samples_ri;
 
     spec_one <- Peak2ID$spectra
 
@@ -172,7 +174,8 @@ libID <- function(Peak2ID, lib_matrix) {
       # Adding RI to the identifications from the library
       ris <- sapply(id_table.s$compound, function(x){
         a <- which(libs_ri$comp == x)
-        return(libs_ri$ri[a[1]])})
+        b <- libs_ri$ri[a[1]]
+        return(readr::parse_number(b))})
 
       id_table.s$t_ri <- as.numeric(ris)
 
