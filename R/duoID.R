@@ -295,7 +295,7 @@ rt2ri <- function(rtTime, lib) {
 #'
 #' Calculates Kovats Retention Index based in Alkanes
 #'
-getRI <- function(DuoResults, RI){
+getRI <- function(DuoResults, RI, libs_ri = NULL, samples_ri = NULL){
 
   ris <- NULL
   #for each peak in the list compute the retention index based in alkanes
