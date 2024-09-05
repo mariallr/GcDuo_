@@ -204,7 +204,10 @@ libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
                             "RT1" = Peak2ID$time1D,
                             "RT2" = Peak2ID$time2D,
                             "sim" = id_table.s$sim[pos],
-                            "rsim" = id_table.s$rsim[pos]
+                            "rsim" = id_table.s$rsim[pos],
+                            "matches" = ifelse(nrow(id_table.s)>= 10,
+                                               id_table.s$compound[2:10],
+                                               id_table.s$compound[2:nrow(id_table.s)])
       )
     } else {
       process <- data.frame("Name" = paste("Unknown_", Peak2ID$pos),
