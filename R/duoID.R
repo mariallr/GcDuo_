@@ -215,7 +215,8 @@ libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
                             "RT1" = Peak2ID$time1D,
                             "RT2" = Peak2ID$time2D,
                             "sim" = 0,
-                            "rsim" = 0
+                            "rsim" = 0,
+                            "matches" = NA
       )
     }
 
@@ -225,7 +226,8 @@ libID <- function(Peak2ID, lib_matrix, libs_ri = NULL, samples_ri = NULL) {
                           "RT1" = Peak2ID$time1D,
                           "RT2" = Peak2ID$time2D,
                           "sim" = 0,
-                          "rsim" = 0
+                          "rsim" = 0,
+                          "matches" = NA
     )
   }
 
