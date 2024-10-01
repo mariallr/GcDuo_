@@ -128,7 +128,7 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 
     spec_std <- finalGCDuo$spectra[peak_id,]
 
-    pf1 <- multiway::parafac(GcDuoObject$data4D[,,(rt2_pos-win_width):(rt2_pos+win_width),rt1_pos], 1, Bfixed = matrix(t(spec_std), nrow = length(GcDuoObject$mz)),
+    pf1 <- multiway::parafac2(GcDuoObject$data4D[,,(rt2_pos-win_width):(rt2_pos+win_width),rt1_pos], 1, Bfixed = matrix(t(spec_std), nrow = length(GcDuoObject$mz)),
                              const = c("ortnon", "nonneg", "nonneg"), nstart = 100)
 
     rem <- fitted(pf1) #reconstructed matrix
@@ -170,7 +170,7 @@ PlotPeak <- function(GcDuoObject, finalGCDuo, peakid = "68-68-1", type = "eic", 
 
     spec_std <- finalGCDuo$spectra[peak_id,]
 
-    pf1 <- multiway::parafac(GcDuoObject$data4D[,,(rt2_pos-win_width):(rt2_pos+win_width),rt1_pos], 1, Bfixed = matrix(t(spec_std), nrow = length(GcDuoObject$mz)),
+    pf1 <- multiway::parafac2(GcDuoObject$data4D[,,(rt2_pos-win_width):(rt2_pos+win_width),rt1_pos], 1, Bfixed = matrix(t(spec_std), nrow = length(GcDuoObject$mz)),
                              const = c("ortnon", "nonneg", "nonneg"), nstart = 100)
 
     rem <- fitted(pf1) #reconstructed matrix
